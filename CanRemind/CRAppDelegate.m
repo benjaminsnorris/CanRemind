@@ -7,15 +7,34 @@
 //
 
 #import "CRAppDelegate.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 @implementation CRAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeSound | UIUserNotificationTypeBadge categories:nil];
+    [application registerUserNotificationSettings:settings];
+    
+    UILocalNotification *localNotification = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+    if (localNotification) {
+        // This doesn't seem to actually do anything
+        application.applicationIconBadgeNumber = 0;
+    }
+    
+    AudioServicesPlaySystemSound(1300);
+    
     return YES;
 }
-							
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"An Alert" message:notification.alertBody delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alertView show];
+    application.applicationIconBadgeNumber = 0;
+
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
